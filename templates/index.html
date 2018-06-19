@@ -9,6 +9,7 @@
             <th>Project</th>
             <th>Doc Path</th>
             <th>Original Path</th>
+            <th>Revisions</th>
             <th>Status</th>
         </tr>
     </thead>
@@ -22,11 +23,15 @@
                 <td>{{ result.lang }} </td>
                 <td>{{ result.path }}</td>
                 <td>{{ result.orig_path }}</td>
-                {% if result.up_to_date %}
-                    <td>Up to date.</td>
+                <td>r{{ result.rev }} => r{{ result.orig_rev }}</td>
+                {% if result.up_to_date == True %}
+                    <td class="table-success">Up to date.</td>
                 {% endif %}
-                {% if not result.up_to_date %}
-                    <td>Outdated. <a href="{{ result.diff_url }}">Diff</a></td>
+                {% if result.up_to_date == False %}
+                    <td class="table-warning">Outdated. <a href="{{ result.diff_url }}">[See Diff from Original]</a></td>
+                {% endif %}
+                {% if result.up_to_date == None %}
+                    <td>Unable to fetch. </td>
                 {% endif %}
             </tr>
         {% endfor %}
