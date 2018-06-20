@@ -2,7 +2,7 @@
 import re
 import svn.remote
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 # Flask init
 app = Flask(__name__)
@@ -19,14 +19,22 @@ REGEX_CN_COMMIT = "Original Revision: r([0-9]*)"
 
 @app.route('/')
 def index():
-    file = client.cat(rel_filepath=CN_URL).decode("utf-8")
-    trans_version = re.search(REGEX_CN_COMMIT, file).group(1)
-    origin_version = str(client.info(rel_path=EN_URL)["commit_revision"])
-    return jsonify({"trans_version": trans_version,
-                    "origin_version": origin_version}), 201
+    return jsonify({"message": "Hello world! Please use /api."}), 200
 
 
-# log = client.log_default(rel_filepath=EN_URL)
+@app.route('/api', methods=['GET'])
+def api():
+    path = request.args.get("path")
+    ref_path = request.args.get("ref_path")
+    regex = request.args.get("regex")
+    if None in (path, ref_path, regex):
+        return jsonify({"message": "Missing one of (path, ref_path, regex)"}), 400
+
+    file = client.cat(rel_filepath=path).decode("utf-8")
+    rev = re.search(regex, file).group(1)
+    ref_rev = str(client.info(rel_path=ref_path)["commit_revision"])
+    return jsonify({"rev": rev,
+                    "ref_rev": ref_rev}), 200
 
 
 if __name__ == '__main__':
