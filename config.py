@@ -7,4 +7,4 @@ DEBUG = True
 
 # Define the database
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'app.db')
-DATABASE_CONNECT_OPTIONS = {}
+SQLALCHEMY_TRACK_MODIFICATIONS = True
