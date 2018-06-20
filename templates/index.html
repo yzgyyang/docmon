@@ -22,17 +22,17 @@
             {% for file in files %}
                 <tr>
                     <td class="d-none d-sm-block">{{ lang }}</td>
-                    <td>{{ file.path }}</td>
-                    <td class="d-none d-sm-block">{{ file.orig_path }}</td>
+                    <td><a href="{{ svnweb_url }}{{ file.path }}">{{ file.path }}</a></td>
+                    <td class="d-none d-sm-block"><a href="{{ svnweb_url }}{{ file.orig_path }}">{{ file.orig_path }}</a></td>
                     <td>r{{ file.rev }} => r{{ file.orig_rev }}</td>
                     {% if file.orig_rev == "SVN Error" %}
-                        <td class="table-success">SVN Error, original file may be moved.</td>
+                        <td>SVN Error, original file may be moved.</td>
                     {% elif file.up_to_date == True %}
                         <td class="table-success">Up to date.</td>
                     {% elif file.up_to_date == False %}
                         <td class="table-warning">Outdated. <a href="{{ file.diff_url }}">[See Diff from Original]</a></td>
                     {% elif file.up_to_date == None %}
-                        <td>Unable to fetch. </td>
+                        <td>Regex Error, check comment format.</td>
                     {% endif %}
                 </tr>
             {% endfor %}

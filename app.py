@@ -13,7 +13,7 @@ SVNWEB_URL = "https://svnweb.FreeBSD.org/doc/head/"
 client = svn.remote.RemoteClient(SVN_URL)
 
 # Config
-regex = "Original [Rr]evision: r([0-9]*)"
+regex = "Original [Rr]evision: r{0,1}([0-9]*)"
 projects = ["zh_CN"]
 
 
@@ -31,7 +31,9 @@ def index():
             print(file)
             results[lang].append(file)
 
-    return render_template("index.html", results=results)
+    return render_template("index.html",
+                           results=results,
+                           svnweb_url=SVNWEB_URL)
 
 
 @app.route('/api', methods=['GET'])
@@ -61,7 +63,7 @@ def svn_compare(path, orig_path, regex):
 
 
 def get_diff_url(orig_path, rev, orig_rev):
-    url = SVNWEB_URL + orig_path + "?r1=" + rev + "&r2=" + orig_rev + "&pathrev=" + orig_rev
+    url = SVNWEB_URL + orig_path + "?r1=" + rev + "&r2=" + orig_rev
     return url
 
 
