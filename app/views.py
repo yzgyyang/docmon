@@ -1,11 +1,8 @@
-#!env/bin/python
 import re
 import svn.remote
 
-from flask import Flask, jsonify, request, render_template
-
-# Flask init
-app = Flask(__name__)
+from app import app
+from flask import jsonify, request, render_template
 
 # SVN client init
 SVN_URL = "https://svn.FreeBSD.org/doc/head/"
@@ -108,7 +105,3 @@ def get_all_file_details():
                 details[lang].append(detail)
 
     return details
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
