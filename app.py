@@ -73,16 +73,19 @@ def get_file_line(lang):
 
 
 def get_file_detail(file_line):
-    path = file_line
-
-    if "htdocs" in path:
-        orig_path = "en_US.ISO8859-1/htdocs/"
-        orig_path += path.split("htdocs/", 1)[1]
-    elif "share/xml" in path:
-        orig_path = "share/xml/"
-        orig_path += path.split("share/xml/", 1)[1]
+    if "=>" in file_line:
+        path = file_line.split("=>")[0].strip()
+        orig_path = file_line.split("=>")[1].strip()
     else:
-        return None
+        path = file_line
+        if "htdocs" in path:
+            orig_path = "en_US.ISO8859-1/htdocs/"
+            orig_path += path.split("htdocs/", 1)[1]
+        elif "share/xml" in path:
+            orig_path = "share/xml/"
+            orig_path += path.split("share/xml/", 1)[1]
+        else:
+            return None
 
     detail = {
         "lang": path.split(".", 1)[0],
