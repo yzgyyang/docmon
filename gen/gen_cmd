@@ -1,0 +1,1 @@
+ag "Original [Rr]evision:" --files-with-matches | grep --invert-match -e books -e articles -e Makefile | grep <zh_CN>
