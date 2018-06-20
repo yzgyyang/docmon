@@ -2,6 +2,7 @@
 import re
 import svn.remote
 
+from data import PROJECTS
 from flask import Flask, jsonify, request, render_template
 
 # Flask init
@@ -13,50 +14,38 @@ SVNWEB_URL = "https://svnweb.FreeBSD.org/doc/head/"
 client = svn.remote.RemoteClient(SVN_URL)
 
 
-# Data
-PROJECTS = {
-    "zh_CN": {
-        "config": {
-            "regex": "Original [Rr]evision: r([0-9]*)",
-        },
-        "files": [{
-            "path": "zh_CN.UTF-8/share/xml/news.xml",
-            "orig_path": "share/xml/news.xml",
-        }, {
-            "path": "zh_CN.UTF-8/share/xml/header.l10n.ent",
-            "orig_path": "share/xml/header.ent"
-        }, {
-            "path": "zh_CN.UTF-8/htdocs/index.xsl",
-            "orig_path": "en_US.ISO8859-1/htdocs/index.xsl"
-        }, {
-            "path": "zh_CN.UTF-8/htdocs/where.xml",
-            "orig_path": "en_US.ISO8859-1/htdocs/where.xml"
-        }, {
-            "path": "zh_CN.UTF-8/htdocs/community.xsl",
-            "orig_path": "en_US.ISO8859-1/htdocs/community.xsl"
-        }]
-    }
-}
-
-
 @app.route('/')
 def index():
     results = []
-    for key, value in PROJECTS.items():
-        lang = key
-        regex = value["config"]["regex"]
-        for file in value["files"]:
-            path = file["path"]
-            orig_path = file["orig_path"]
-            up_to_date, rev, orig_rev = svn_compare(path, orig_path, regex)
-            diff_url = get_diff_url(orig_path, rev, orig_rev)
-            results += [{"lang": lang,
-                         "up_to_date": up_to_date,
-                         "path": path,
-                         "orig_path": orig_path,
-                         "rev": rev,
-                         "orig_rev": orig_rev,
-                         "diff_url": diff_url}]
+
+    # Unpacking PROJECTS =>
+    # (str)project_name: (dict)(zh_CN, ...)
+    for project_name, project in PROJECTS.items():
+        lang = project_name
+
+        # Unpacking config =>
+        # (str)file_type: (dict)(config)
+        for file_type, config in project["config"].items():
+            path_prefix = config["path_prefix"]
+            orig_path_prefix = config["orig_path_prefix"]
+            rev_type = config["rev_type"]
+            regex = config["regex"]
+
+            # Unpacking files[filetype] =>
+            # (dict)file
+            for file in project["files"][file_type]:
+                path = path_prefix + file["path"]
+                orig_path = orig_path_prefix + file["orig_path"]
+                up_to_date, rev, orig_rev = svn_compare(path, orig_path, regex)
+                diff_url = get_diff_url(orig_path, rev, orig_rev)
+
+                results += [{"lang": lang,
+                             "up_to_date": up_to_date,
+                             "path": path,
+                             "orig_path": orig_path,
+                             "rev": rev,
+                             "orig_rev": orig_rev,
+                             "diff_url": diff_url}]
     return render_template("index.html", results=results)
 
 
