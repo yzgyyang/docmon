@@ -6,9 +6,9 @@
     <!--Table head-->
     <thead>
         <tr>
-            <th>Project</th>
+            <th class="d-none d-sm-block">Project</th>
             <th>Doc Path</th>
-            <th>Original Path</th>
+            <th class="d-none d-sm-block">Original Path</th>
             <th>Revisions</th>
             <th>Status</th>
         </tr>
@@ -20,9 +20,9 @@
             <!--td colspan="2">Larry the Bird</td-->
         {% for result in results %}
             <tr>
-                <td>{{ result.lang }} </td>
+                <td class="d-none d-sm-block">{{ result.lang }} </td>
                 <td>{{ result.path }}</td>
-                <td>{{ result.orig_path }}</td>
+                <td class="d-none d-sm-block">{{ result.orig_path }}</td>
                 <td>r{{ result.rev }} => r{{ result.orig_rev }}</td>
                 {% if result.up_to_date == True %}
                     <td class="table-success">Up to date.</td>
