@@ -2,7 +2,6 @@
 import re
 import svn.remote
 
-from data import PROJECTS
 from flask import Flask, jsonify, request, render_template
 
 # Flask init
@@ -13,39 +12,25 @@ SVN_URL = "https://svn.FreeBSD.org/doc/head/"
 SVNWEB_URL = "https://svnweb.FreeBSD.org/doc/head/"
 client = svn.remote.RemoteClient(SVN_URL)
 
+# Config
+regex = "Original [Rr]evision: r([0-9]*)"
+projects = ["zh_CN"]
+
 
 @app.route('/')
 def index():
-    results = []
+    results = {}
 
-    # Unpacking PROJECTS =>
-    # (str)project_name: (dict)(zh_CN, ...)
-    for project_name, project in PROJECTS.items():
-        lang = project_name
+    details = get_all_file_details()
+    for lang, files in details.items():
+        results[lang] = []
+        for file in files:
+            file["up_to_date"], file["rev"], file["orig_rev"] = \
+                svn_compare(file["path"], file["orig_path"], regex)
+            file["diff_url"] = get_diff_url(file["orig_path"], file["rev"], file["orig_rev"])
+            print(file)
+            results[lang].append(file)
 
-        # Unpacking config =>
-        # (str)file_type: (dict)(config)
-        for file_type, config in project["config"].items():
-            path_prefix = config["path_prefix"]
-            orig_path_prefix = config["orig_path_prefix"]
-            rev_type = config["rev_type"]
-            regex = config["regex"]
-
-            # Unpacking files[filetype] =>
-            # (dict)file
-            for file in project["files"][file_type]:
-                path = path_prefix + file["path"]
-                orig_path = orig_path_prefix + file["orig_path"]
-                up_to_date, rev, orig_rev = svn_compare(path, orig_path, regex)
-                diff_url = get_diff_url(orig_path, rev, orig_rev)
-
-                results += [{"lang": lang,
-                             "up_to_date": up_to_date,
-                             "path": path,
-                             "orig_path": orig_path,
-                             "rev": rev,
-                             "orig_rev": orig_rev,
-                             "diff_url": diff_url}]
     return render_template("index.html", results=results)
 
 
@@ -63,7 +48,10 @@ def api():
 
 
 def svn_compare(path, orig_path, regex):
-    orig_rev = str(client.info(rel_path=orig_path)["commit_revision"])
+    try:
+        orig_rev = str(client.info(rel_path=orig_path)["commit_revision"])
+    except svn.exception.SvnException:
+        orig_rev = "SVN Error"
     file = client.cat(rel_filepath=path).decode("utf-8")
     re_result = re.search(regex, file)
     if re_result is None:
@@ -75,6 +63,46 @@ def svn_compare(path, orig_path, regex):
 def get_diff_url(orig_path, rev, orig_rev):
     url = SVNWEB_URL + orig_path + "?r1=" + rev + "&r2=" + orig_rev + "&pathrev=" + orig_rev
     return url
+
+
+def get_file_line(lang):
+    with open("gen/" + lang) as f:
+        return f.read().split("\n")
+
+
+def get_file_detail(file_line):
+    path = file_line
+
+    if "htdocs" in path:
+        orig_path = "en_US.ISO8859-1/htdocs/"
+        orig_path += path.split("htdocs/", 1)[1]
+    elif "share/xml" in path:
+        orig_path = "share/xml/"
+        orig_path += path.split("share/xml/", 1)[1]
+    else:
+        return None
+
+    detail = {
+        "lang": path.split(".", 1)[0],
+        "path": path,
+        "orig_path": orig_path,
+    }
+
+    print(path + " => " + orig_path)
+    return detail
+
+
+def get_all_file_details():
+    details = {}
+
+    for lang in projects:
+        details[lang] = []
+        for line in get_file_line(lang):
+            detail = get_file_detail(line)
+            if detail is not None:
+                details[lang].append(detail)
+
+    return details
 
 
 if __name__ == '__main__':

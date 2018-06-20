@@ -18,22 +18,24 @@
     <!--Table body-->
     <tbody>
             <!--td colspan="2">Larry the Bird</td-->
-        {% for result in results %}
-            <tr>
-                <td class="d-none d-sm-block">{{ result.lang }} </td>
-                <td>{{ result.path }}</td>
-                <td class="d-none d-sm-block">{{ result.orig_path }}</td>
-                <td>r{{ result.rev }} => r{{ result.orig_rev }}</td>
-                {% if result.up_to_date == True %}
-                    <td class="table-success">Up to date.</td>
-                {% endif %}
-                {% if result.up_to_date == False %}
-                    <td class="table-warning">Outdated. <a href="{{ result.diff_url }}">[See Diff from Original]</a></td>
-                {% endif %}
-                {% if result.up_to_date == None %}
-                    <td>Unable to fetch. </td>
-                {% endif %}
-            </tr>
+        {% for lang, files in results.items() %}
+            {% for file in files %}
+                <tr>
+                    <td class="d-none d-sm-block">{{ lang }}</td>
+                    <td>{{ file.path }}</td>
+                    <td class="d-none d-sm-block">{{ file.orig_path }}</td>
+                    <td>r{{ file.rev }} => r{{ file.orig_rev }}</td>
+                    {% if file.orig_rev == "SVN Error" %}
+                        <td class="table-success">SVN Error, original file may be moved.</td>
+                    {% elif file.up_to_date == True %}
+                        <td class="table-success">Up to date.</td>
+                    {% elif file.up_to_date == False %}
+                        <td class="table-warning">Outdated. <a href="{{ file.diff_url }}">[See Diff from Original]</a></td>
+                    {% elif file.up_to_date == None %}
+                        <td>Unable to fetch. </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
         {% endfor %}
     </tbody>
     <!--Table body-->
