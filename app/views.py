@@ -19,7 +19,12 @@ projects = ["zh_CN", "zh_TW"]
 
 @app.route('/')
 def index():
-    results, time_str = db_get_data()
+    return "Not Implemented"
+
+
+@app.route('/lang/<lang>')
+def lang_index(lang):
+    results, time_str = db_get_lang_data(lang)
     return render_template("index.html",
                            results=results,
                            svnweb_url=SVNWEB_URL)
@@ -117,6 +122,8 @@ def update_data():
 
 def db_update_data():
     details = get_all_file_details()
+
+    # Update Files
     for lang, files in details.items():
         for file in files:
             path = file["path"]
@@ -129,6 +136,19 @@ def db_update_data():
             db_file.rev, db_file.orig_rev = svn_compare(path, db_file.orig_path, regex)
             db.session.commit()
 
+    # Update Lang
+    lang_stat = db_get_lang_from_files()
+    for lang, stat in lang_stat.items():
+        if Lang.query.filter(Lang.lang == lang).count() == 0:
+            db.session.add(Lang(lang=lang))
+            db.session.commit()
+        db_lang = Lang.query.filter(Lang.lang == lang).first()
+        db_lang.updated = stat["updated"]
+        db_lang.outdated = stat["outdated"]
+        db_lang.ignored = stat["ignored"]
+        db.session.commit()
+
+    # Update Meta
     if Meta.query.filter(Meta.key == "last_updated").count() == 0:
         db.session.add(Meta(key="last_updated"))
         db.session.commit()
@@ -137,12 +157,33 @@ def db_update_data():
     db.session.commit()
 
 
-def db_get_data():
+def db_get_lang_from_files():
+    lang_stat = {}
+    files = Files.query.all()
+
+    for file in files:
+        if file.lang not in lang_stat.keys():
+            lang_stat[file.lang] = {
+                "updated": 0,
+                "outdated": 0,
+                "ignored": 0
+            }
+        if file.orig_rev == "SVN Error":
+            lang_stat[file.lang]["ignored"] += 1
+        elif file.rev == file.orig_rev:
+            lang_stat[file.lang]["updated"] += 1
+        else:
+            lang_stat[file.lang]["outdated"] += 1
+
+    return lang_stat
+
+
+def db_get_lang_data(lang):
     results = {}
     if Files.query.count() == 0:
         db_update_data()
 
-    files = Files.query.all()
+    files = Files.query.filter(Files.lang == lang).all()
     for file in files:
         if file.lang not in results.keys():
             results[file.lang] = []

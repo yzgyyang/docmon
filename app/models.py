@@ -12,10 +12,9 @@ class Lang(db.Model):
     __tablename__ = 'lang'
 
     lang = db.Column(db.String, primary_key=True)
-    total_files = db.Integer
-    updated_files = db.Integer
-    outdated_files = db.Integer
-    ignored_files = db.Integer
+    updated = db.Integer
+    outdated = db.Integer
+    ignored = db.Integer
 
 
 class Files(db.Model):
