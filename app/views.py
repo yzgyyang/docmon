@@ -42,7 +42,7 @@ def svn_compare(path, orig_path, regex):
         orig_rev = str(client.info(rel_path=orig_path)["commit_revision"])
     except svn.exception.SvnException:
         orig_rev = "SVN Error"
-    file = client.cat(rel_filepath=path).decode("utf-8")
+    file = client.cat(rel_filepath=path).decode("utf-8", "ignore")
     re_result = re.search(regex, file)
     if re_result is None:
         return "", orig_rev
