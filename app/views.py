@@ -19,13 +19,17 @@ projects = ["zh_CN", "zh_TW"]
 
 @app.route('/')
 def index():
-    return "Not Implemented"
+    lang_stat = db_get_lang_stat()
+    time_str = db_get_last_updated_time_str()
+    return render_template("index.html",
+                           lang_stat=lang_stat)
 
 
 @app.route('/lang/<lang>')
 def lang_index(lang):
-    results, time_str = db_get_lang_data(lang)
-    return render_template("index.html",
+    results = db_get_files_from_lang(lang)
+    time_str = db_get_last_updated_time_str()
+    return render_template("lang_index.html",
                            results=results,
                            svnweb_url=SVNWEB_URL)
 
@@ -178,7 +182,7 @@ def db_get_lang_from_files():
     return lang_stat
 
 
-def db_get_lang_data(lang):
+def db_get_files_from_lang(lang):
     results = {}
     if Files.query.count() == 0:
         db_update_data()
@@ -197,7 +201,27 @@ def db_get_lang_data(lang):
             }
         )
 
+    return results
+
+
+def db_get_lang_stat():
+    lang_stat = {}
+    if Lang.query.count() == 0:
+        db_update_data()
+
+    for lang in projects:
+        db_lang = Lang.query.filter(Lang.lang == lang).first()
+        lang_stat[lang] = {
+            "updated": db_lang.updated,
+            "outdated": db_lang.outdated,
+            "ignored": db_lang.ignored
+        }
+
+    return lang_stat
+
+
+def db_get_last_updated_time_str():
     db_time = Meta.query.filter(Meta.key == "last_updated").first()
     time_str = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(int(db_time.value)))
 
-    return results, time_str
+    return time_str
