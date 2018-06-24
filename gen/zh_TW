@@ -1,6 +1,6 @@
 zh_TW.UTF-8/share/xml/mailing-lists.ent
 zh_TW.UTF-8/share/xml/trademarks.ent
-zh_TW.UTF-8/share/xml/header.l10n.ent
+zh_TW.UTF-8/share/xml/header.l10n.ent => share/xml/header.ent
 zh_TW.UTF-8/share/xml/urls.ent
 zh_TW.UTF-8/share/xml/navibar.l10n.ent
 zh_TW.UTF-8/share/xml/news.xml

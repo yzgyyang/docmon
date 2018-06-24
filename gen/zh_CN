@@ -5,7 +5,7 @@ zh_CN.UTF-8/share/xml/transtable-local.xsl
 zh_CN.UTF-8/share/xml/mailing-lists.ent
 zh_CN.UTF-8/share/xml/transtable.xml
 zh_CN.UTF-8/share/xml/trademarks.ent
-zh_CN.UTF-8/share/xml/release.l10n.ent
+zh_CN.UTF-8/share/xml/release.l10n.ent => share/xml/release.ent
 zh_CN.UTF-8/share/xml/mirrors-local.xsl
 zh_CN.UTF-8/share/xml/news.xml
 zh_CN.UTF-8/htdocs/developers.xml

@@ -14,7 +14,7 @@ client = svn.remote.RemoteClient(SVN_URL)
 
 # Config
 regex = "Original [Rr]evision: r{0,1}([0-9]*)"
-projects = ["zh_CN", "zh_TW"]
+projects = ["zh_CN", "zh_TW", "ja_JP"]
 
 
 @app.route('/')
