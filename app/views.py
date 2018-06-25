@@ -107,23 +107,6 @@ def get_all_file_details():
     return details
 
 
-def update_data():
-    results = {}
-
-    details = get_all_file_details()
-    for lang, files in details.items():
-        results[lang] = []
-        for file in files:
-            rev, orig_rev = svn_compare(file["path"], file["orig_path"], regex)
-            up_to_date = rev == orig_rev
-            file["up_to_date"], file["rev"], file["orig_rev"] = up_to_date, rev, orig_rev
-            file["diff_url"] = get_diff_url(file["orig_path"], file["rev"], file["orig_rev"])
-            print(file)
-            results[lang].append(file)
-
-    return results
-
-
 def db_update_data():
     details = get_all_file_details()
 
