@@ -107,6 +107,26 @@ def get_all_file_details():
     return details
 
 
+def compare_rev(rev, orig_rev):
+    if orig_rev == "SVN Error":
+        return None, "SVN Error, original file may be moved."
+    if rev == "1":
+        return None, "Legacy revision (1.X) used, skipping."
+
+    try:
+        int_rev = int(rev)
+        int_orig_rev = int(orig_rev)
+    except ValueError:
+        return None, "Revision parse error, skipping."
+
+    if int_rev > int_orig_rev:
+        return None, "File revision ahead of original, skipping."
+    if int_rev == int_orig_rev:
+        return True, "Up to date."
+    if int_rev < int_orig_rev:
+        return False, "Outdated."
+
+
 def db_update_data():
     details = get_all_file_details()
 
@@ -155,9 +175,10 @@ def db_get_lang_from_files():
                 "outdated": 0,
                 "ignored": 0
             }
-        if file.orig_rev == "SVN Error":
+        up_to_date, message = compare_rev(file.rev, file.orig_rev)
+        if up_to_date is None:
             lang_stat[file.lang]["ignored"] += 1
-        elif file.rev == file.orig_rev:
+        elif up_to_date:
             lang_stat[file.lang]["updated"] += 1
         else:
             lang_stat[file.lang]["outdated"] += 1
@@ -174,12 +195,14 @@ def db_get_files_from_lang(lang):
     for file in files:
         if file.lang not in results.keys():
             results[file.lang] = []
+        up_to_date, message = compare_rev(file.rev, file.orig_rev)
         results[file.lang].append({
             "path": file.path,
             "orig_path": file.orig_path,
             "rev": file.rev,
             "orig_rev": file.orig_rev,
-            "up_to_date": file.rev == file.orig_rev,
+            "up_to_date": up_to_date,
+            "message": message,
             "diff_url": get_diff_url(file.orig_path, file.rev, file.orig_rev),
             }
         )
