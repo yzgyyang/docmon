@@ -22,7 +22,8 @@ def index():
     lang_stat = db_get_lang_stat()
     time_str = db_get_last_updated_time_str()
     return render_template("index.html",
-                           lang_stat=lang_stat)
+                           lang_stat=lang_stat,
+                           time_str=time_str)
 
 
 @app.route('/lang/<lang>')
@@ -31,7 +32,8 @@ def lang_index(lang):
     time_str = db_get_last_updated_time_str()
     return render_template("lang_index.html",
                            results=results,
-                           svnweb_url=SVNWEB_URL)
+                           svnweb_url=SVNWEB_URL,
+                           time_str=time_str)
 
 
 @app.route('/init')
