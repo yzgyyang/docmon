@@ -25,12 +25,14 @@
                         <td class="d-none d-sm-block">{{ lang }}</td>
                         <td><a href="{{ svnweb_url }}{{ file.path }}">{{ file.path }}</a></td>
                         <td class="d-none d-sm-block"><a href="{{ svnweb_url }}{{ file.orig_path }}">{{ file.orig_path }}</a></td>
-                        <td>r{{ file.rev }} => r{{ file.orig_rev }}</td>
                         {% if file.up_to_date == True %}
+                            <td>r{{ file.rev }}</td>
                             <td class="table-success">{{ file.message }}</td>
                         {% elif file.up_to_date == False %}
+                            <td>r{{ file.rev }} => r{{ file.orig_rev }}</td>
                             <td class="table-warning">{{ file.message }} <a href="{{ file.diff_url }}">[See Diff from Original]</a></td>
                         {% elif file.up_to_date == None %}
+                            <td>r{{ file.rev }} => r{{ file.orig_rev }}</td>
                             <td>{{ file.message }}</td>
                         {% endif %}
                     </tr>
