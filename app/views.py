@@ -1,5 +1,6 @@
 import re
 import time
+import _thread
 import svn.remote
 
 from app import app, db
@@ -15,6 +16,9 @@ client = svn.remote.RemoteClient(SVN_URL)
 # Config
 regex = "Original [Rr]evision: r{0,1}([0-9]*)"
 projects = ["zh_CN", "zh_TW", "ja_JP"]
+
+# A lock for the database
+db_lock = _thread.allocate_lock()
 
 
 @app.route('/')
@@ -44,8 +48,20 @@ def init():
 
 @app.route('/update')
 def update():
-    db_update_data()
-    return jsonify({"message": "Update was successful."}), 200
+    if db_lock.locked():
+        return jsonify({"message": "An update is in progress, please check later."}), 423
+    else:
+        _thread.start_new_thread(db_update_data, ())
+        return jsonify({"message": "Update was successfully triggered."}), 200
+
+
+# A decorator
+def with_db_lock(func):
+    def new_func():
+        db_lock.acquire()
+        func()
+        db_lock.release()
+    return new_func
 
 
 def svn_compare(path, orig_path, regex):
@@ -129,6 +145,7 @@ def compare_rev(rev, orig_rev):
         return False, "Outdated."
 
 
+@with_db_lock
 def db_update_data():
     details = get_all_file_details()
 
@@ -190,8 +207,6 @@ def db_get_lang_from_files():
 
 def db_get_files_from_lang(lang):
     results = {}
-    if Files.query.count() == 0:
-        db_update_data()
 
     files = Files.query.filter(Files.lang == lang).all()
     for file in files:
@@ -215,7 +230,7 @@ def db_get_files_from_lang(lang):
 def db_get_lang_stat():
     lang_stat = {}
     if Lang.query.count() == 0:
-        db_update_data()
+        raise ValueError("Database has no records.")
 
     for lang in projects:
         db_lang = Lang.query.filter(Lang.lang == lang).first()
