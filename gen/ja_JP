@@ -1,12 +1,12 @@
-ja_JP.eucJP/share/xml/teams.ent
 ja_JP.eucJP/share/xml/header.l10n.ent => share/xml/header.ent
+ja_JP.eucJP/share/xml/release.l10n.ent => share/xml/release.ent
+ja_JP.eucJP/share/xml/navibar.l10n.ent => share/xml/navibar.ent
 ja_JP.eucJP/share/xml/libcommon.xsl
+ja_JP.eucJP/share/xml/teams.ent
 ja_JP.eucJP/share/xml/mailing-lists.ent
 ja_JP.eucJP/share/xml/trademarks.ent
 ja_JP.eucJP/share/xml/press.xml
 ja_JP.eucJP/share/xml/templates.oldnewsflash.xsl
-ja_JP.eucJP/share/xml/release.l10n.ent => share/xml/release.ent
-ja_JP.eucJP/share/xml/navibar.l10n.ent
 ja_JP.eucJP/share/xml/templates.events.xsl
 ja_JP.eucJP/share/xml/templates.news-rss.xsl
 ja_JP.eucJP/share/xml/templates.oldpress.xsl
@@ -34,18 +34,8 @@ ja_JP.eucJP/htdocs/community/newsgroups.xml
 ja_JP.eucJP/htdocs/community/mailinglists.xml
 ja_JP.eucJP/htdocs/community/irc.xml
 ja_JP.eucJP/htdocs/index.xsl
-ja_JP.eucJP/htdocs/news/press-rel-1.xml
-ja_JP.eucJP/htdocs/news/press-rel-5.xml
-ja_JP.eucJP/htdocs/news/1996/index.xml
-ja_JP.eucJP/htdocs/news/press-rel-3.xml
-ja_JP.eucJP/htdocs/news/2001/press.xml
-ja_JP.eucJP/htdocs/news/2001/news.xml
 ja_JP.eucJP/htdocs/news/news.xml
 ja_JP.eucJP/htdocs/news/pressreleases.xml
-ja_JP.eucJP/htdocs/news/2012-compromise.xml
-ja_JP.eucJP/htdocs/news/1997/index.xml
-ja_JP.eucJP/htdocs/news/press-rel-4.xml
-ja_JP.eucJP/htdocs/news/press-rel-2.xml
 ja_JP.eucJP/htdocs/mailto.xml
 ja_JP.eucJP/htdocs/developers/cvs.xml
 ja_JP.eucJP/htdocs/copyright/license.xml
