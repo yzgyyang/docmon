@@ -1,6 +1,6 @@
 zh_CN.UTF-8/share/xml/header.l10n.ent => share/xml/header.ent
-zh_CN.UTF-8/share/xml/release.l10n.ent => share/xml/release.ent
 zh_CN.UTF-8/share/xml/navibar.l10n.ent => share/xml/navibar.ent
+zh_CN.UTF-8/share/xml/release.l10n.ent => en_US.ISO8859-1/share/xml/release.l10n.ent
 zh_CN.UTF-8/share/xml/teams.ent
 zh_CN.UTF-8/share/xml/libcommon.xsl
 zh_CN.UTF-8/share/xml/transtable-local.xsl

@@ -4,6 +4,7 @@ zh_TW.UTF-8/share/xml/mailing-lists.ent
 zh_TW.UTF-8/share/xml/trademarks.ent
 zh_TW.UTF-8/share/xml/urls.ent
 zh_TW.UTF-8/share/xml/news.xml
+zh_TW.UTF-8/htdocs/community.xsl
 zh_TW.UTF-8/htdocs/developers.xml
 zh_TW.UTF-8/htdocs/logo.xml
 zh_TW.UTF-8/htdocs/index.xsl
