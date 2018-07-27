@@ -67,9 +67,10 @@ def with_db_lock(func):
 def svn_compare(path, orig_path, regex):
     try:
         orig_rev = str(client.info(rel_path=orig_path)["commit_revision"])
+        file = client.cat(rel_filepath=path).decode("utf-8", "ignore")
     except svn.exception.SvnException:
         orig_rev = "SVN Error"
-    file = client.cat(rel_filepath=path).decode("utf-8", "ignore")
+        return "", orig_rev
     re_result = re.search(regex, file)
     if re_result is None:
         return "", orig_rev
