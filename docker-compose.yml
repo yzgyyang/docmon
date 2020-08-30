@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: gunicorn --bind 0.0.0.0:5000 --timeout 90 app:app
+    volumes:
+      - .:/usr/src/app/
+    ports:
+      - 5000:5000
